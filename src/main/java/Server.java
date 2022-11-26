@@ -37,4 +37,13 @@ public class Server {
                 .filter(client -> client.getSocket().isConnected())
                 .forEach(client -> client.sendMessage(SERVER_NAME, message));
     }
+
+    public static void closeConnection(ConnectedClient client){
+        try {
+            client.getSocket().close();
+            clients.remove(client);
+        } catch (IOException e) {
+            throw new RuntimeException(e); // todo: make own exception
+        }
+    }
 }

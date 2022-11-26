@@ -33,8 +33,8 @@ public class Server {
     }
 
     private static void sendAll(String message) {
-        Server.clients.forEach(client -> client.sendMessage(SERVER_NAME, message));
+        Server.clients.stream()
+                .filter(client -> client.getSocket().isConnected())
+                .forEach(client -> client.sendMessage(SERVER_NAME, message));
     }
-
-
 }

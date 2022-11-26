@@ -12,8 +12,6 @@ public class Server {
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(10160)) {
-            System.out.println("Server is started!");
-
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 try {

@@ -22,17 +22,16 @@ public class Server {
 
                     sendToEveryone(client.getSessionName() + " successfully connected.");
                 } catch (IOException e) {
-                    System.out.println("Connection is broken.");
+                    System.out.println("Connection is broken."); //todo: make own exception
                     clientSocket.close();
                 }
             }
-
         } catch (IOException e) {
-            System.out.println("Connection is broken.");
+            System.out.println("Connection is broken."); //todo: make own exception
         }
     }
 
-    private static void sendAll(String message) {
+    private static void sendToEveryone(String message) {
         Server.clients.stream()
                 .filter(client -> client.getSocket().isConnected())
                 .forEach(client -> client.sendMessage(SERVER_NAME, message));

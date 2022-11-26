@@ -16,9 +16,11 @@ public class Server {
                 Socket clientSocket = serverSocket.accept();
                 try {
                     ConnectedClient client = new ConnectedClient(clientSocket, "Client-"+(++sessionNumber));
+                    client.sendMessage(SERVER_NAME, "Welcome to our test server!");
+
                     clients.add(client);
 
-                    sendAll(client.getName() + " successfully connected.");
+                    sendToEveryone(client.getSessionName() + " successfully connected.");
                 } catch (IOException e) {
                     System.out.println("Connection is broken.");
                     clientSocket.close();

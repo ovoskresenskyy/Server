@@ -3,6 +3,7 @@ package org.example.model;
 import org.example.NotMyExecutor;
 import org.example.enums.Command;
 import lombok.Data;
+import org.example.exceptions.UserInputIsNullException;
 import org.example.service.ClientConnectorService;
 import org.example.service.MenuService;
 
@@ -41,10 +42,10 @@ public class ClientConnector implements Runnable {
     @Override
     public void run() {
 
-        String userInput;
-
         ClientConnectorService clientConnectorService = new ClientConnectorService(this);
         Map<Command, NotMyExecutor> commands = initializeCommands(clientConnectorService);
+
+        String userInput;
         try {
             do {
                 MenuService.printCommandMenu(this);
@@ -52,7 +53,7 @@ public class ClientConnector implements Runnable {
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
 
-                commands.getOrDefault(Command.getFromString(userInput), clientConnectorService.wrongCommand())
+                commands.getOrDefault(Command.getByName(userInput), clientConnectorService.wrongCommand())
                         .execute();
             } while (!userInput.equals("-exit"));
         } catch (IOException | UserInputIsNullException e) {

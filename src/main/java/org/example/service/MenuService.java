@@ -15,8 +15,10 @@ public class MenuService {
 
     public static void printCommandMenu(ClientConnector recipient) {
 
-        StringBuilder greeting = new StringBuilder("Welcome to our server!\nKnown commands:");
-        COMMANDS.forEach(command -> greeting.append("\n -> ")
+        StringBuilder greeting = new StringBuilder();
+        COMMANDS.stream()
+                .filter(Command::getVisibility)
+                .forEach(command -> greeting.append("\n -> ")
                 .append(command)
                 .append(" ")
                 .append(command.getDescription()));

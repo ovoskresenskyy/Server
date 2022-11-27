@@ -50,12 +50,14 @@ public class ClientConnector implements Runnable {
                 MenuService.printCommandMenu(this);
 
                 userInput = reader.readLine();
+                if (userInput == null) throw new UserInputIsNullException();
 
                 commands.getOrDefault(Command.getFromString(userInput), clientConnectorService.wrongCommand())
                         .execute();
             } while (!userInput.equals("-exit"));
-        } catch (IOException e) {
-            // todo: make own exception
+        } catch (IOException | UserInputIsNullException e) {
+            e.printStackTrace();
+            clientConnectorService.closeConnection().execute();
         }
     }
 

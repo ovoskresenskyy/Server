@@ -42,6 +42,8 @@ public class ClientConnectorService {
                 MyServer.clientConnectors.remove(clientConnector);
                 clientConnector.getSocket().close();
                 scanner.close();
+
+                System.out.println(clientConnector.getThread().getName() + " is disconnected.");
             } catch (IOException e) {
                 throw new RuntimeException(e); // todo: make own exception
             }

@@ -27,7 +27,8 @@ public class ClientConnectorService {
 
     private String getMessageFromUser() {
         MenuService.sendPrivateMessage(MenuService.SERVER_NAME, clientConnector, "Insert message you want to send");
-        return scanner.next();
+        String userInput = scanner.next(); //todo rework.
+        return userInput;
     }
 
     public NotMyExecutor wrongCommand() {

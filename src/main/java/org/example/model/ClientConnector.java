@@ -34,6 +34,8 @@ public class ClientConnector implements Runnable {
         connectionTimeStamp = LocalDate.now();
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         sender = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+        MenuService.sendPrivateMessage(MenuService.SERVER_NAME, this, "Welcome to our server!\nKnown commands:");
     }
 
     @Override

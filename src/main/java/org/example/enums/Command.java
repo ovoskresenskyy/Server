@@ -26,11 +26,11 @@ public enum Command {
         return visibility;
     }
 
-    public static Command getFromString(String userInput) throws IllegalArgumentException {
-        return Arrays.stream(values())
-                .filter(command -> command.name.equalsIgnoreCase(userInput))
+    public static Command getByName(String userInput) {
+        return Arrays.stream(Command.values())
+                .filter(command -> command.name.equals(userInput))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("unknown value")); // todo: need to rework
+                .orElse(WRONG_INPUT);
     }
 
     @Override

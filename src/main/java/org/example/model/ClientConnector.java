@@ -4,6 +4,7 @@ import org.example.NotMyExecutor;
 import org.example.enums.Command;
 import lombok.Data;
 import org.example.exceptions.CantSetConnectionWithSocketException;
+import org.example.exceptions.SocketIsNotReadyToGetUserDataException;
 import org.example.exceptions.UserInputIsNullException;
 import org.example.service.ClientConnectorService;
 import org.example.service.MenuService;
@@ -46,12 +47,11 @@ public class ClientConnector implements Runnable {
     public void run() {
 
         ClientConnectorService clientConnectorService = new ClientConnectorService(this);
-        Map<Command, NotMyExecutor> commands = initializeCommands(clientConnectorService);
 
         String userInput;
         try {
             do {
-                MenuService.printCommandMenu(this);
+                Map<Command, NotMyExecutor> commands = initializeCommands(clientConnectorService);
 
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
@@ -59,13 +59,13 @@ public class ClientConnector implements Runnable {
                 commands.getOrDefault(Command.getByName(userInput), clientConnectorService.wrongCommand())
                         .execute();
             } while (!userInput.equals("-exit"));
-        } catch (IOException | UserInputIsNullException e) {
+        } catch (IOException | UserInputIsNullException | SocketIsNotReadyToGetUserDataException e) {
             e.printStackTrace();
             clientConnectorService.closeConnection().execute();
         }
     }
 
-    private Map<Command, NotMyExecutor> initializeCommands(ClientConnectorService clientConnectorService) {
+    private Map<Command, NotMyExecutor> initializeCommands(ClientConnectorService clientConnectorService) throws SocketIsNotReadyToGetUserDataException {
         return Map.of(
                 Command.SEND_FILE, clientConnectorService.sendFile(),
                 Command.MESSAGE, clientConnectorService.sendMessageForAllConnected(),

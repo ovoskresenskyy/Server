@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.NotMyExecutor;
+import org.example.exceptions.SocketIsNotReadyToGetUserDataException;
 import org.example.model.ClientConnector;
 import org.example.model.MyServer;
 
@@ -14,20 +15,24 @@ public class ClientConnectorService {
     public ClientConnectorService(ClientConnector clientConnector) {
         this.clientConnector = clientConnector;
         scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
     }
 
     public NotMyExecutor sendFile() {
         return () -> System.out.println("send file");
     }
 
-    public NotMyExecutor sendMessageForAllConnected() {
-        return () -> MenuService.sendToEveryone(clientConnector.getThread().getName(), getMessageFromUser(), clientConnector);
+    public NotMyExecutor sendMessageForAllConnected() throws SocketIsNotReadyToGetUserDataException {
+        return () -> MenuService.sendToEveryone(clientConnector.getThread().getName(), getInputFromUser());
     }
 
-    private String getMessageFromUser() {
+    private String getInputFromUser() throws SocketIsNotReadyToGetUserDataException {
         MenuService.sendPrivateMessage(MenuService.SERVER_NAME, clientConnector, "Insert message you want to send");
-        String userInput = scanner.next(); //todo rework.
-        return userInput;
+        try {
+            return clientConnector.getReader().readLine();
+        } catch (IOException e) {
+            throw new SocketIsNotReadyToGetUserDataException();
+        }
     }
 
     public NotMyExecutor wrongCommand() {

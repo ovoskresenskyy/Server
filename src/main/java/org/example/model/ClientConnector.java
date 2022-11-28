@@ -40,8 +40,6 @@ public class ClientConnector implements Runnable {
         } catch (IOException e) {
             throw new CantSetConnectionWithSocketException();
         }
-
-        MenuService.sendPrivateMessage(MenuService.SERVER_NAME, this, "Welcome to our server!\nKnown commands:");
     }
 
     @Override

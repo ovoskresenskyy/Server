@@ -35,9 +35,8 @@ public class MenuService {
         }
     }
 
-    public static void sendToEveryone(String sender, String message, ClientConnector elementToSkip) {
+    public static void sendToEveryone(String sender, String message) {
         MyServer.clientConnectors.stream()
-                .filter(clientConnector -> !clientConnector.equals(elementToSkip))
                 .filter(clientConnector -> clientConnector.getThread().isAlive())
                 .filter(clientConnector -> clientConnector.getSocket().isConnected())
                 .forEach(clientConnector -> sendPrivateMessage(sender, clientConnector, message));

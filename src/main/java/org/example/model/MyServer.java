@@ -39,5 +39,4 @@ public class MyServer {
             System.exit(1);
         }
     }
-
 }

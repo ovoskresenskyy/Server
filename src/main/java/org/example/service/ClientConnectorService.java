@@ -6,16 +6,12 @@ import org.example.model.ClientConnector;
 import org.example.model.MyServer;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class ClientConnectorService {
     private final ClientConnector clientConnector;
-    private final Scanner scanner;
 
     public ClientConnectorService(ClientConnector clientConnector) {
         this.clientConnector = clientConnector;
-        scanner = new Scanner(System.in);
-        scanner.useDelimiter("\n");
     }
 
     public NotMyExecutor sendFile() {

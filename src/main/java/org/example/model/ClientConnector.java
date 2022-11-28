@@ -7,7 +7,6 @@ import org.example.exceptions.CantSetConnectionWithSocketException;
 import org.example.exceptions.SocketIsNotReadyToGetUserDataException;
 import org.example.exceptions.UserInputIsNullException;
 import org.example.service.ClientConnectorService;
-import org.example.service.MenuService;
 
 import java.io.*;
 import java.net.Socket;

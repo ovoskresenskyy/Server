@@ -35,10 +35,6 @@ public class ClientConnectorService {
         }
     }
 
-    public NotMyExecutor wrongCommand() {
-        return () -> MenuService.sendPrivateMessage(MenuService.SERVER_NAME, clientConnector, "Unknown command");
-    }
-
     public NotMyExecutor closeConnection() {
         return () -> {
             try {
@@ -46,7 +42,6 @@ public class ClientConnectorService {
 
                 MyServer.clientConnectors.remove(clientConnector);
                 clientConnector.getSocket().close();
-                scanner.close();
 
                 System.out.println(clientConnector.getThread().getName() + " is disconnected.");
             } catch (IOException e) {

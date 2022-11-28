@@ -1,5 +1,6 @@
 package org.example.model;
 
+import org.example.exceptions.CantSetConnectionWithSocketException;
 import org.example.service.MenuService;
 
 import java.io.*;
@@ -27,13 +28,15 @@ public class MyServer {
                     MenuService.sendToEveryone(MenuService.SERVER_NAME
                             , clientConnector.getThread().getName() + " successfully connected."
                             , clientConnector);
-                } catch (IOException e) {
-                    System.out.println("Connection is broken."); //todo: make own exception
+                } catch (CantSetConnectionWithSocketException e) {
+                    e.printStackTrace();
                     clientSocket.close();
                 }
             }
         } catch (IOException e) {
-            System.out.println("Connection is broken."); //todo: make own exception
+            System.out.println("Connection is broken.");
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 

@@ -3,6 +3,7 @@ package org.example.model;
 import org.example.NotMyExecutor;
 import org.example.enums.Command;
 import lombok.Data;
+import org.example.exceptions.CantSetConnectionWithSocketException;
 import org.example.exceptions.UserInputIsNullException;
 import org.example.service.ClientConnectorService;
 import org.example.service.MenuService;
@@ -21,20 +22,24 @@ public class ClientConnector implements Runnable {
     private final BufferedReader reader;
     private final BufferedWriter sender;
 
-    public static ClientConnector createAndStart(Socket socket, String name) throws IOException {
+    public static ClientConnector createAndStart(Socket socket, String name) throws CantSetConnectionWithSocketException {
 
         ClientConnector clientConnector = new ClientConnector(socket, name);
         clientConnector.thread.start();
         return clientConnector;
     }
 
-    private ClientConnector(Socket socket, String name) throws IOException {
+    private ClientConnector(Socket socket, String name) throws CantSetConnectionWithSocketException {
 
         thread = new Thread(this, name);
         this.socket = socket;
         connectionTimeStamp = LocalDate.now();
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        sender = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        try {
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            sender = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        } catch (IOException e) {
+            throw new CantSetConnectionWithSocketException();
+        }
 
         MenuService.sendPrivateMessage(MenuService.SERVER_NAME, this, "Welcome to our server!\nKnown commands:");
     }

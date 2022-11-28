@@ -27,7 +27,7 @@ public enum Command {
     }
 
     public static Command getByName(String userInput) {
-        return Arrays.stream(Command.values())
+        return Arrays.stream(values())
                 .filter(command -> command.name.equals(userInput))
                 .findFirst()
                 .orElse(WRONG_INPUT);

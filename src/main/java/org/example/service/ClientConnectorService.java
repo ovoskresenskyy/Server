@@ -13,7 +13,6 @@ public class ClientConnectorService {
 
     public ClientConnectorService(ClientConnector clientConnector) {
         this.clientConnector = clientConnector;
-
         scanner = new Scanner(System.in);
     }
 

@@ -54,9 +54,7 @@ public class ClientConnector implements Runnable {
                 MenuService.printCommandMenu(this);
 
                 userInput = reader.readLine();
-                System.out.println("userInput = " + userInput);
                 if (userInput == null) throw new UserInputIsNullException();
-                System.out.flush();
 
                 commands.getOrDefault(Command.getByName(userInput), clientConnectorService.wrongCommand())
                         .execute();

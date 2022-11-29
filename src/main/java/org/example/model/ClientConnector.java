@@ -12,6 +12,8 @@ import org.example.service.MenuService;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
 
 @Data
@@ -19,7 +21,7 @@ public class ClientConnector implements Runnable {
 
     private Thread thread;
     private final Socket socket;
-    private final LocalDate connectionTimeStamp;
+    private final Date connectionTimeStamp;
     private final BufferedReader reader;
     private final BufferedWriter sender;
 
@@ -38,7 +40,7 @@ public class ClientConnector implements Runnable {
 
         thread = new Thread(this, name);
         this.socket = socket;
-        connectionTimeStamp = LocalDate.now();
+        connectionTimeStamp = new Date();
         try {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             sender = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -52,13 +54,11 @@ public class ClientConnector implements Runnable {
 
         ClientConnectorService clientConnectorService = ClientConnectorService.getInstance();
         Map<Command, NotMyExecutor> commandHandler = initializeCommands(clientConnectorService);
-        MenuService menuService = MenuService.getInstance();
 
         String userInput;
         try {
             do {
 
-                menuService.showSenderName(this);
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
 

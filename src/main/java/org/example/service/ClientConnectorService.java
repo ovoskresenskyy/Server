@@ -7,7 +7,6 @@ import org.example.model.MyServer;
 import java.io.IOException;
 
 public class ClientConnectorService {
-    private final ClientConnector clientConnector;
 
     private ClientConnectorService(){}
 
@@ -23,11 +22,11 @@ public class ClientConnectorService {
         return () -> System.out.println("send file");
     }
 
-    public NotMyExecutor sendMessageForAllConnected(String userInput) {
-        return () -> MenuService.sendToEveryone(clientConnector.getThread().getName(), userInput);
+    public NotMyExecutor sendMessageForAllConnected(ClientConnector sender, String message) {
+        return () -> MenuService.getInstance().sendToEveryone(sender.toString(), message);
     }
 
-    public NotMyExecutor closeConnection() {
+    public NotMyExecutor closeConnection(ClientConnector clientConnector) {
         return () -> {
             try {
                 MenuService.sendToEveryone(MenuService.SERVER_NAME, clientConnector.getThread().getName() + " leave our server.");

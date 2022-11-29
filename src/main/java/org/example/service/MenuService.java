@@ -6,25 +6,41 @@ import org.example.model.MyServer;
 
 import java.io.IOException;
 import java.util.EnumSet;
-import java.util.Set;
 
 public class MenuService {
 
-    public static final String SERVER_NAME = "SERVER";
-    private static final Set<Command> COMMANDS = EnumSet.allOf(Command.class);
+    private MenuService() {
+    }
 
-    public static void printCommandMenu(ClientConnector recipient) {
+    private static class MenuServiceHolder {
+        private final static MenuService instance = new MenuService();
+    }
 
+    public static MenuService getInstance() {
+        return MenuServiceHolder.instance;
+    }
+
+    public void printCommandMenu(ClientConnector recipient) {
         StringBuilder greeting = new StringBuilder();
-        COMMANDS.forEach(command -> greeting.append("\n -> ")
+        EnumSet.allOf(Command.class)
+                .forEach(command -> greeting.append("\n -> ")
                 .append(command)
                 .append(" ")
                 .append(command.getDescription()));
 
-        sendPrivateMessage(SERVER_NAME, recipient, greeting.toString());
+        sendPrivateMessageFromServer(recipient, greeting.toString());
     }
 
-    public static void sendPrivateMessage(String sender, ClientConnector recipient, String message) {
+    public void showSenderName(ClientConnector recipient) {
+        try {
+            recipient.getSender().write(issueSenderName(recipient));
+            recipient.getSender().flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo: make own exception
+        }
+    }
+
+    public void sendPrivateMessage(String sender, ClientConnector recipient, String message) {
         try {
             recipient.getSender().write(issueSenderName(sender) + message + "\n");
             recipient.getSender().flush();
@@ -33,23 +49,26 @@ public class MenuService {
         }
     }
 
-    public static void showSenderName(ClientConnector recipient) {
-        try {
-            recipient.getSender().write(issueSenderName(recipient.getThread().getName()));
-            recipient.getSender().flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e); //todo: make own exception
-        }
+    public void sendPrivateMessageFromServer(ClientConnector recipient, String message) {
+        sendPrivateMessage("Server", recipient, message);
     }
 
-    public static void sendToEveryone(String sender, String message) {
+    public void sendToEveryone(String sender, String message) {
         MyServer.clientConnectors.stream()
                 .filter(clientConnector -> clientConnector.getThread().isAlive())
                 .filter(clientConnector -> clientConnector.getSocket().isConnected())
-                .forEach(clientConnector -> sendPrivateMessage(sender, clientConnector, message));
+                .forEach(recipient -> sendPrivateMessage(sender, recipient, message));
     }
 
-    private static String issueSenderName(String senderName) {
+    public void sendToEveryoneFromServer(String message) {
+        sendToEveryone("Server", message);
+    }
+
+    private String issueSenderName(String senderName) {
         return "[" + senderName + "]: ";
+    }
+
+    private String issueSenderName(ClientConnector sender) {
+        return issueSenderName(sender.toString());
     }
 }

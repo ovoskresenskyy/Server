@@ -9,7 +9,6 @@ import org.example.exceptions.UserInputIsNullException;
 import org.example.service.ClientConnectorService;
 import org.example.service.MenuService;
 
-import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDate;
@@ -59,7 +58,9 @@ public class ClientConnector implements Runnable {
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
 
-                commandHandler.getOrDefault(Command.getByName(userInput), clientConnectorService.sendMessageForAllConnected(userInput))
+                commandHandler
+                        .getOrDefault(Command.getByName(userInput)
+                                , clientConnectorService.sendMessageForAllConnected(thread.getName(), userInput))
                         .execute();
             } while (!userInput.equals("-exit"));
         } catch (IOException | UserInputIsNullException | SocketIsNotReadyToGetUserDataException e) {

@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class MenuService {
 
-    public static final String SERVER_NAME = "[SERVER]";
+    public static final String SERVER_NAME = "SERVER";
     private static final Set<Command> COMMANDS = EnumSet.allOf(Command.class);
 
     public static void printCommandMenu(ClientConnector recipient) {
@@ -26,7 +26,7 @@ public class MenuService {
 
     public static void sendPrivateMessage(String sender, ClientConnector recipient, String message) {
         try {
-            recipient.getSender().write(sender + " " + message + "\n");
+            recipient.getSender().write(issueSenderName(sender) + message + "\n");
             recipient.getSender().flush();
         } catch (IOException e) {
             throw new RuntimeException(e); //todo: make own exception
@@ -40,4 +40,7 @@ public class MenuService {
                 .forEach(clientConnector -> sendPrivateMessage(sender, clientConnector, message));
     }
 
+    private static String issueSenderName(String senderName) {
+        return "[" + senderName + "]: ";
+    }
 }

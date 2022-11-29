@@ -17,7 +17,9 @@ public class MyServer {
     public static void main(String[] args) {
 
         try (ServerSocket serverSocket = new ServerSocket(10160)) {
-            System.out.println("Server started!");
+            System.out.println("Server was started!");
+
+            MenuService menuService = MenuService.getInstance();
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -25,9 +27,9 @@ public class MyServer {
                     ClientConnector clientConnector = ClientConnector.createAndStart(clientSocket, "Client-" + (++sessionNumber));
                     clientConnectors.add(clientConnector);
 
-                    MenuService.sendToEveryone(MenuService.SERVER_NAME, clientConnector.getThread().getName() + " successfully connected.");
-                    MenuService.sendPrivateMessage(MenuService.SERVER_NAME, clientConnector, "Welcome to our server!\nKnown commands:");
-                    MenuService.printCommandMenu(clientConnector);
+                    menuService.sendToEveryoneFromServer(clientConnector + " successfully connected.");
+                    menuService.sendPrivateMessageFromServer(clientConnector, "Welcome to our server!\nKnown commands:");
+                    menuService.printCommandMenu(clientConnector);
                 } catch (CantSetConnectionWithSocketException e) {
                     e.printStackTrace();
                     clientSocket.close();

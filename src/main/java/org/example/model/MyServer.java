@@ -27,8 +27,7 @@ public class MyServer {
                     ClientConnector clientConnector = ClientConnector.createAndStart(clientSocket, "Client-" + (++sessionNumber));
                     clientConnectors.add(clientConnector);
 
-                    menuService.sendToEveryoneFromServer(clientConnector + " successfully connected.");
-                    menuService.sendPrivateMessageFromServer(clientConnector, "Welcome to our server!");
+                    menuService.sendToEveryone("", clientConnector + " successfully connected.");
 
                     System.out.println(clientConnector + " is connected!");
                 } catch (CantSetConnectionWithSocketException e) {

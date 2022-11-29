@@ -9,8 +9,14 @@ import java.io.IOException;
 public class ClientConnectorService {
     private final ClientConnector clientConnector;
 
-    public ClientConnectorService(ClientConnector clientConnector) {
-        this.clientConnector = clientConnector;
+    private ClientConnectorService(){}
+
+    private static class ClientConnectorServiceHolder {
+        private final static ClientConnectorService instance = new ClientConnectorService();
+    }
+
+    public static ClientConnectorService getInstance() {
+        return ClientConnectorService.ClientConnectorServiceHolder.instance;
     }
 
     public NotMyExecutor sendFile() {

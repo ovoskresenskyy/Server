@@ -28,8 +28,9 @@ public class MyServer {
                     clientConnectors.add(clientConnector);
 
                     menuService.sendToEveryoneFromServer(clientConnector + " successfully connected.");
-                    menuService.sendPrivateMessageFromServer(clientConnector, "Welcome to our server!\nKnown commands:");
-                    menuService.printCommandMenu(clientConnector);
+                    menuService.sendPrivateMessageFromServer(clientConnector, "Welcome to our server!");
+
+                    System.out.println(clientConnector + " is connected!");
                 } catch (CantSetConnectionWithSocketException e) {
                     e.printStackTrace();
                     clientSocket.close();

@@ -21,12 +21,14 @@ public class MenuService {
     }
 
     public void printCommandMenu(ClientConnector recipient) {
-        StringBuilder greeting = new StringBuilder();
+        StringBuilder greeting = new StringBuilder("Known commands:");
         EnumSet.allOf(Command.class)
-                .forEach(command -> greeting.append("\n -> ")
-                .append(command)
-                .append(" ")
-                .append(command.getDescription()));
+                .forEach(command -> greeting
+                        .append(System.lineSeparator())
+                        .append("-> ")
+                        .append(command)
+                        .append(" ")
+                        .append(command.getDescription()));
 
         sendPrivateMessageFromServer(recipient, greeting.toString());
     }
@@ -42,7 +44,7 @@ public class MenuService {
 
     public void sendPrivateMessage(String sender, ClientConnector recipient, String message) {
         try {
-            recipient.getSender().write(issueSenderName(sender) + message + "\n");
+            recipient.getSender().write(issueSenderName(sender) + message + System.lineSeparator());
             recipient.getSender().flush();
         } catch (IOException e) {
             throw new RuntimeException(e); //todo: make own exception

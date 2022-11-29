@@ -27,6 +27,10 @@ public class ClientConnector implements Runnable {
 
         ClientConnector clientConnector = new ClientConnector(socket, name);
         clientConnector.thread.start();
+
+        MenuService menuService = MenuService.getInstance();
+        menuService.printCommandMenu(clientConnector);
+
         return clientConnector;
     }
 

@@ -47,14 +47,15 @@ public class ClientConnector implements Runnable {
     @Override
     public void run() {
 
-        ClientConnectorService clientConnectorService = new ClientConnectorService(this);
+        ClientConnectorService clientConnectorService = ClientConnectorService.getInstance();
         Map<Command, NotMyExecutor> commandHandler = initializeCommands(clientConnectorService);
+        MenuService menuService = MenuService.getInstance();
 
         String userInput;
         try {
             do {
 
-                MenuService.showSenderName(this);
+                menuService.showSenderName(this);
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
 
@@ -63,14 +64,14 @@ public class ClientConnector implements Runnable {
             } while (!userInput.equals("-exit"));
         } catch (IOException | UserInputIsNullException | SocketIsNotReadyToGetUserDataException e) {
             e.printStackTrace();
-            clientConnectorService.closeConnection().execute();
+            clientConnectorService.closeConnection(this).execute();
         }
     }
 
     private Map<Command, NotMyExecutor> initializeCommands(ClientConnectorService clientConnectorService) {
         return Map.of(
                 Command.SEND_FILE, clientConnectorService.sendFile(),
-                Command.EXIT, clientConnectorService.closeConnection()
+                Command.EXIT, clientConnectorService.closeConnection(this)
         );
     }
 }

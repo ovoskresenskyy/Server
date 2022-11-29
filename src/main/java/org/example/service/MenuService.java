@@ -21,7 +21,11 @@ public class MenuService {
     }
 
     public void printCommandMenu(ClientConnector recipient) {
-        StringBuilder greeting = new StringBuilder("Known commands:");
+
+        StringBuilder greeting = new StringBuilder("Welcome to our server!")
+                .append(System.lineSeparator())
+                .append("Known commands:");
+
         EnumSet.allOf(Command.class)
                 .forEach(command -> greeting
                         .append(System.lineSeparator())
@@ -30,16 +34,7 @@ public class MenuService {
                         .append(" ")
                         .append(command.getDescription()));
 
-        sendPrivateMessageFromServer(recipient, greeting.toString());
-    }
-
-    public void showSenderName(ClientConnector recipient) {
-        try {
-            recipient.getSender().write(issueSenderName(recipient));
-            recipient.getSender().flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e); //todo: make own exception
-        }
+        sendPrivateMessage("", recipient, greeting.toString());
     }
 
     public void sendPrivateMessage(String sender, ClientConnector recipient, String message) {
@@ -51,26 +46,16 @@ public class MenuService {
         }
     }
 
-    public void sendPrivateMessageFromServer(ClientConnector recipient, String message) {
-        sendPrivateMessage("Server", recipient, message);
-    }
-
     public void sendToEveryone(String sender, String message) {
+        System.out.println(sender + ": " + message);
+
         MyServer.clientConnectors.stream()
                 .filter(clientConnector -> clientConnector.getThread().isAlive())
                 .filter(clientConnector -> clientConnector.getSocket().isConnected())
                 .forEach(recipient -> sendPrivateMessage(sender, recipient, message));
     }
 
-    public void sendToEveryoneFromServer(String message) {
-        sendToEveryone("Server", message);
-    }
-
     private String issueSenderName(String senderName) {
-        return "[" + senderName + "]: ";
-    }
-
-    private String issueSenderName(ClientConnector sender) {
-        return issueSenderName(sender.toString());
+        return senderName.equals("") ? senderName : "[" + senderName + "]: ";
     }
 }

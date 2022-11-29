@@ -22,8 +22,8 @@ public class ClientConnectorService {
         return () -> System.out.println("send file");
     }
 
-    public NotMyExecutor sendMessageForAllConnected(ClientConnector sender, String message) {
-        return () -> MenuService.getInstance().sendToEveryone(sender.toString(), message);
+    public NotMyExecutor sendMessageForAllConnected(String sender, String message) {
+        return () -> MenuService.getInstance().sendToEveryone(sender, message);
     }
 
     public NotMyExecutor closeConnection(ClientConnector clientConnector) {

@@ -74,4 +74,9 @@ public class ClientConnector implements Runnable {
                 Command.EXIT, clientConnectorService.closeConnection(this)
         );
     }
+
+    @Override
+    public String toString() {
+        return thread.getName();
+    }
 }

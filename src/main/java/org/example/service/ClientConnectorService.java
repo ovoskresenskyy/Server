@@ -29,7 +29,7 @@ public class ClientConnectorService {
     public NotMyExecutor closeConnection(ClientConnector clientConnector) {
         return () -> {
             try {
-                MenuService.sendToEveryone(MenuService.SERVER_NAME, clientConnector.getThread().getName() + " leave our server.");
+                MenuService.getInstance().sendToEveryoneFromServer(clientConnector + " leave our server.");
 
                 MyServer.clientConnectors.remove(clientConnector);
                 clientConnector.getSocket().close();

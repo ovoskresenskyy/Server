@@ -52,6 +52,7 @@ public class ClientConnector implements Runnable {
         try {
             do {
 
+                MenuService.showSenderName(this);
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
 

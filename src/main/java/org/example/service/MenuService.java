@@ -33,6 +33,15 @@ public class MenuService {
         }
     }
 
+    public static void showSenderName(ClientConnector recipient) {
+        try {
+            recipient.getSender().write(issueSenderName(recipient.getThread().getName()));
+            recipient.getSender().flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e); //todo: make own exception
+        }
+    }
+
     public static void sendToEveryone(String sender, String message) {
         MyServer.clientConnectors.stream()
                 .filter(clientConnector -> clientConnector.getThread().isAlive())

@@ -4,20 +4,18 @@ import org.example.NotMyExecutor;
 import org.example.enums.Command;
 import lombok.Data;
 import org.example.exceptions.CantSetConnectionWithSocketException;
-import org.example.exceptions.SocketIsNotReadyToGetUserDataException;
 import org.example.exceptions.UserInputIsNullException;
-import org.example.service.ClientConnectorService;
+import org.example.service.SocketConnectorService;
 import org.example.service.MenuService;
 
 import java.io.*;
 import java.net.Socket;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.net.SocketException;
 import java.util.Date;
 import java.util.Map;
 
 @Data
-public class ClientConnector implements Runnable {
+public class SocketConnector implements Runnable {
 
     private Thread thread;
     private final Socket socket;
@@ -25,18 +23,17 @@ public class ClientConnector implements Runnable {
     private final BufferedReader reader;
     private final BufferedWriter sender;
 
-    public static ClientConnector createAndStart(Socket socket, String name) throws CantSetConnectionWithSocketException {
+    public static SocketConnector createAndStart(Socket socket, String name) throws CantSetConnectionWithSocketException {
 
-        ClientConnector clientConnector = new ClientConnector(socket, name);
+        SocketConnector clientConnector = new SocketConnector(socket, name);
         clientConnector.thread.start();
 
-        MenuService menuService = MenuService.getInstance();
-        menuService.printCommandMenu(clientConnector);
+        MenuService.getInstance().printCommandMenu(clientConnector);
 
         return clientConnector;
     }
 
-    private ClientConnector(Socket socket, String name) throws CantSetConnectionWithSocketException {
+    private SocketConnector(Socket socket, String name) throws CantSetConnectionWithSocketException {
 
         thread = new Thread(this, name);
         this.socket = socket;
@@ -52,28 +49,29 @@ public class ClientConnector implements Runnable {
     @Override
     public void run() {
 
-        ClientConnectorService clientConnectorService = ClientConnectorService.getInstance();
-        Map<Command, NotMyExecutor> commandHandler = initializeCommands(clientConnectorService);
+        SocketConnectorService socketConnectorService = SocketConnectorService.getInstance();
+        Map<Command, NotMyExecutor> commandHandler = initializeCommands(socketConnectorService);
 
         String userInput;
         try {
-            do {
-
+            while (true) {
                 userInput = reader.readLine();
                 if (userInput == null) throw new UserInputIsNullException();
-
                 commandHandler
                         .getOrDefault(Command.getByName(userInput)
-                                , clientConnectorService.sendMessageForAllConnected(thread.getName(), userInput))
+                                , socketConnectorService.sendMessageForAllConnected(thread.getName(), userInput))
                         .execute();
-            } while (!userInput.equals("-exit"));
-        } catch (IOException | UserInputIsNullException | SocketIsNotReadyToGetUserDataException e) {
+            }
+        } catch (SocketException e) {
             e.printStackTrace();
-            clientConnectorService.closeConnection(this).execute();
+            System.out.println(thread.getName() + " socket is abandoned.");
+        } catch (IOException | RuntimeException e) {
+            e.printStackTrace();
         }
+        socketConnectorService.closeConnection(this).execute();
     }
 
-    private Map<Command, NotMyExecutor> initializeCommands(ClientConnectorService clientConnectorService) {
+    private Map<Command, NotMyExecutor> initializeCommands(SocketConnectorService clientConnectorService) {
         return Map.of(
                 Command.SEND_FILE, clientConnectorService.sendFile(),
                 Command.EXIT, clientConnectorService.closeConnection(this)

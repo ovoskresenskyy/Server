@@ -1,7 +1,7 @@
 package org.example.service;
 
 import org.example.enums.Command;
-import org.example.model.ClientConnector;
+import org.example.model.SocketConnector;
 import org.example.model.MyServer;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class MenuService {
         return MenuServiceHolder.instance;
     }
 
-    public void printCommandMenu(ClientConnector recipient) {
+    public void printCommandMenu(SocketConnector recipient) {
 
         StringBuilder greeting = new StringBuilder("Welcome to our server!")
                 .append(System.lineSeparator())
@@ -37,19 +37,20 @@ public class MenuService {
         sendPrivateMessage("", recipient, greeting.toString());
     }
 
-    public void sendPrivateMessage(String sender, ClientConnector recipient, String message) {
+    public void sendPrivateMessage(String sender, SocketConnector recipient, String message) {
         try {
             recipient.getSender().write(issueSenderName(sender) + message + System.lineSeparator());
             recipient.getSender().flush();
         } catch (IOException e) {
-            throw new RuntimeException(e); //todo: make own exception
+            e.printStackTrace();
+            System.out.println("Can't send message.");
         }
     }
 
     public void sendToEveryone(String sender, String message) {
         System.out.println(sender + ": " + message);
 
-        MyServer.clientConnectors.stream()
+        MyServer.socketConnectors.stream()
                 .filter(clientConnector -> clientConnector.getThread().isAlive())
                 .filter(clientConnector -> clientConnector.getSocket().isConnected())
                 .forEach(recipient -> sendPrivateMessage(sender, recipient, message));

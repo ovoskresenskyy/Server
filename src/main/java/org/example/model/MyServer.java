@@ -12,7 +12,7 @@ import java.util.List;
 public class MyServer {
 
     private static int sessionNumber;
-    public static List<ClientConnector> clientConnectors = new LinkedList<>();
+    public static List<SocketConnector> socketConnectors = new LinkedList<>(); //todo: replace with something ThreadSafety
 
     public static void main(String[] args) {
 
@@ -24,8 +24,8 @@ public class MyServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 try {
-                    ClientConnector clientConnector = ClientConnector.createAndStart(clientSocket, "Client-" + (++sessionNumber));
-                    clientConnectors.add(clientConnector);
+                    SocketConnector clientConnector = SocketConnector.createAndStart(clientSocket, "Client-" + (++sessionNumber));
+                    socketConnectors.add(clientConnector);
 
                     menuService.sendToEveryone("", clientConnector + " successfully connected.");
 
